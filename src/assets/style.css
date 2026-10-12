@@ -1,0 +1,146 @@
+html {
+  font-family: sans-serif;
+}
+
+html * {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0 1em;
+}
+
+h1 {
+  text-align: center;
+}
+
+/* h3 {
+  margin-block-start: 0;
+} */
+
+p,
+a {
+  font-size: 0.85em;
+  line-height: 1.25em;
+}
+
+p {
+  max-width: 80ch;
+}
+
+a {
+  transition: color 0.2s ease-out;
+}
+
+a:link,
+a:visited {
+  color: goldenrod;
+}
+
+a:hover,
+a:focus {
+  color: peru;
+}
+
+.container {
+  width: min(100%, 38rem);
+  margin-inline: auto;
+  margin-top: 5rem;
+}
+
+button {
+  appearance: none;
+  background-color: cornflowerblue;
+  color: white;
+  border: none;
+  padding: 1em;
+  cursor: pointer;
+
+  &:first-child {
+    border-right: 1px solid white;
+  }
+
+  &:hover,
+  &.active {
+    background-color: rgb(30, 104, 239);
+  }
+
+  &.btn-cta {
+    display: block;
+    padding: 0.5em;
+    border-radius: 5px;
+    margin-bottom: 1em;
+  }
+  &.btn-neutral {
+    background-color: transparent;
+    color: darkslategray;
+  }
+
+  &.btn-icon {
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    padding: 0;
+    transition: background-color 0.2s ease-out, opacity 0.2s ease-out;
+    &:hover,
+    &:focus {
+      opacity: 1;
+    }
+  }
+  &.btn-edit,
+  &.btn-delete {
+    width: 2em;
+    height: 2em;
+    background-color: gainsboro;
+    opacity: 0.4;
+  }
+  &.btn-edit {
+    &:hover,
+    &:focus {
+      background-color: rgb(30, 104, 239);
+    }
+  }
+  &.btn-delete {
+    &:hover,
+    &:focus {
+      background-color: crimson;
+    }
+  }
+}
+
+section.tab {
+  border: 2px solid cornflowerblue;
+  padding: 0 1em;
+  min-height: 10em;
+}
+
+.label {
+  display: block;
+  color: darkslategray;
+}
+
+input,
+textarea {
+  margin-bottom: 0.75em;
+  width: 100%;
+}
+
+label:has(:required) span {
+  &:after {
+    content: "*";
+    color: crimson;
+  }
+}
+
+.container hr {
+  color: cornflowerblue;
+}
+
+.error {
+  color: crimson;
+}
+
+.invisible {
+  visibility: hidden;
+}
