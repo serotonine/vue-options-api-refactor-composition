@@ -15,10 +15,6 @@ h1 {
   text-align: center;
 }
 
-/* h3 {
-  margin-block-start: 0;
-} */
-
 p,
 a {
   font-size: 0.85em;
@@ -133,10 +129,6 @@ label:has(:required) span {
   }
 }
 
-.container hr {
-  color: cornflowerblue;
-}
-
 .error {
   color: crimson;
 }
@@ -144,3 +136,4 @@ label:has(:required) span {
 .invisible {
   visibility: hidden;
 }
+.pre-line{ white-space: pre-line; }

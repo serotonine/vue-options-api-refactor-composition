@@ -2,15 +2,16 @@
 // Dual-purpose form: "Add" mode when no resource prop is passed, "Edit" mode when one is.
 // Validation errors are collected and shown in a modal dialog (BaseDialog).
 import BaseDialog from "./BaseDialog.vue";
-import { isValidLink } from "../utilities/form-validators";
-import { ref, inject, defineProps } from "vue";
+import { isValidLink } from "@/utilities/form-validators";
+import { ref, inject, computed } from "vue";
+
+const MAX_TEXT = 600;
 
 const props = defineProps({
   resource: { type: Object, required: false },
 });
 // Inject. //
 const { updateResources, addResource } = inject("res");
-
 // Ref. //
 const data = ref({ title: "", description: "", link: "", ...props.resource });
 const form = ref(null);
@@ -25,18 +26,16 @@ const submit = () => {
   // FormData reads field values by their name attribute — no need to list them manually
   const d = Object.fromEntries(new FormData(form.value));
   for (const [key, value] of Object.entries(d)) {
-    if (value === "") {
-      errors.push(`${key} field is empty,`);
+    if (value.trim() === "") {
+      errors.push(`${key} field is empty.`);
     }
   }
-
   if (d.link !== "" && !isValidLink(d.link)) {
-    errors.push("link is not valid");
+    errors.push("Link is not valid.");
   }
-  if (d.description.length > 600) {
-    errors.push("The description must have max 600 characters");
+  if (d.description.length > MAX_TEXT) {
+    errors.push(`The description must have max ${MAX_TEXT} characters.`);
   }
-
   if (errors.length) {
     for (const err of errors) {
       error.value.push(err);
@@ -48,7 +47,13 @@ const submit = () => {
     ? updateResources({ id: props.resource.id, ...d })
     : addResource(d);
   form.value.reset();
+  data.value = { title: '', description: '', link: '' }
 };
+// Computed. //
+const textCount = computed(() => {
+  const text= data.value.description.trim();
+  return text.length;
+});
 </script>
 
 <template>
@@ -62,12 +67,13 @@ const submit = () => {
         <span class="label"><small>Description</small></span>
         <textarea
           name="description"
-          id=""
           rows="10"
           required
           v-model="data.description"
         ></textarea>
-        <p class="info"><small>Max 600 characters.</small></p>
+        <p class="info" :class="{ invalid: textCount > MAX_TEXT }">
+          <small>{{ textCount }} / {{ MAX_TEXT }}</small>
+        </p>
       </label>
       <label>
         <span class="label"><small>Link</small></span>
@@ -101,10 +107,18 @@ ul.error {
     margin: 0;
     padding: 0;
     list-style-position: inside;
+    &::first-letter{
+      text-transform: capitalize;
+    }
   }
 }
+
 .info {
   color: lightslategray;
   margin-top: -1em;
+  text-align: right;
+  &.invalid {
+    color: crimson;
+  }
 }
 </style>

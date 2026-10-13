@@ -1,6 +1,6 @@
 <script setup>
 // Search bar component. Filters a data list and emits the results.
-import { defineProps, defineEmits, ref, computed } from "vue";
+import { ref, computed } from "vue";
 import { cleanTxt } from "@/utilities/string-utilities";
 import { Search, X } from "@lucide/vue";
 // Pass resources by props in order to make this search component polyvalent.

@@ -1,7 +1,8 @@
 <script setup>
 import StoredResources from "./components/StoredResources.vue";
 import BaseResourceForm from "./components/BaseResourceForm.vue";
-import { ref, provide, readonly } from "vue";
+import { ref, provide } from "vue";
+/** @import { Resource } from '@/utilities/types.js' */
 
 const tabs = {
   "stored-resources": StoredResources,
@@ -18,9 +19,23 @@ const selectTab = (tab, isEmpty = false) => {
   if (isEmpty) resource.value = null;
   activeTab.value = tab;
 };
+const dummyResource = () => {
+  /** @type {Resource} */
+  const dummy = {
+    id: crypto.randomUUID(),
+    title: "Welcome !",
+    description:
+      "A sample resource to get you started. Feel free to search, add, edit or delete resources.\nEach entry needs a title, a description and a valid URL.\nEnjoy!",
+    link: "https://serotonine.netlify.app/",
+  };
+  const resources = [dummy];
+ 
+  localStorage.setItem("resources", JSON.stringify(resources));
+  return resources;
+};
 const loadResources = () => {
   const localResources = localStorage.getItem("resources");
-  return JSON.parse(localResources) ?? [];
+  return JSON.parse(localResources) ?? dummyResource();
 };
 const saveResources = () => {
   localStorage.setItem("resources", JSON.stringify(resources.value));
@@ -87,7 +102,9 @@ provide("res", {
       </button>
       <component
         :is="tabs[activeTab]"
-        v-bind="activeTab === 'base-resource-form' ? { resource:resource } : {}"
+        v-bind="
+          activeTab === 'base-resource-form' ? { resource: resource } : {}
+        "
       >
       </component>
     </div>

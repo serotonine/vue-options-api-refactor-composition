@@ -1,7 +1,7 @@
 <script setup>
 // Displays a single resource card with edit and delete actions.
 // editResource and removeResource are injected from App.vue.
-import { ref, inject, defineProps } from "vue";
+import { ref, inject} from "vue";
 import { Pencil, Trash } from "@lucide/vue";
 
 const props = defineProps({
@@ -47,8 +47,7 @@ const remove = () => {
           </button>
         </div>
       </header>
-
-      <p>{{ resource.description }}</p>
+      <p class="pre-line">{{ resource.description }}</p>
       <a :href="resource.link" target="_blank" rel="noopener noreferrer"
         >Read more...</a
       >

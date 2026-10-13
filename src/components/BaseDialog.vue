@@ -2,17 +2,14 @@
 // Generic modal dialog built on the native <dialog> element.
 // showModal() gives us a free backdrop and focus trap without extra libraries.
 // Content is injected via the default slot.
-import { ref, defineEmits, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { X } from "@lucide/vue";
 // Emits. //
 const emit = defineEmits(["close"]);
 // Ref. //
 const dialog = ref(null);
 // Methods. //
-/* const open = () => {
-  dialog.value.showModal();
-}; */
-// Emits "close" so the parent can toggle its v-if and unmount this component
+// Emits "close" so the BaseResourceForm can toggle its v-if and unmount this component.
 const close = () => {
   emit("close");
 };
