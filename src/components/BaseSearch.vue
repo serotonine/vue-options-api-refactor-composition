@@ -1,79 +1,71 @@
-<script>
-// Search bar component. Filters the resource list and emits the results
-// to the parent (StoredResources) via the "search-results" event.
+<script setup>
+// Search bar component. Filters a data list and emits the results.
+import { defineProps, defineEmits, ref, computed } from "vue";
+import { cleanTxt } from "@/utilities/string-utilities";
 import { Search, X } from "@lucide/vue";
+// Pass resources by props in order to make this search component polyvalent.
+const props = defineProps({
+  resources: { type: Array },
+});
+// Emits. //
+const emit = defineEmits(["search-results"]);
+// Ref. //
+const inputEl = ref(null);
+const searchInput = ref("");
+const searchResults = ref(null);
+const noResult = ref(false);
+const isResult = ref(false);
 
-export default {
-  components: { Search, X },
-  props: {
-    // The full unfiltered list, used as the search source and to restore on reset
-    resources: { type: Array, required: true },
-  },
-  emits: ["search-results"],
-  data() {
-    return {
-      searchInput: "",
-      searchResults: [],
-      noResult: false,
-      isResult: false,
-    };
-  },
-  computed: {
-    resultMessage() {
-      const lg = this.searchResults.length;
-      if (this.isResult) {
-        return `Your search has ${lg} result${lg > 1 ? "s" : ""}.`;
-      } else if (this.noResult) {
-        return "No results.";
-      } else {
-        return "\u00A0";
-      }
-    },
-  },
-  methods: {
-    // Normalizes text for case-insensitive, whitespace-trimmed comparison
-    cleanTxt(txt) {
-      return txt.toLowerCase().trim();
-    },
-    search() {
-      const motif = this.cleanTxt(this.searchInput);
-      this.searchResults = this.resources.filter((resource) => {
-        return (
-          this.cleanTxt(resource?.title).includes(motif) ||
-          this.cleanTxt(resource?.description).includes(motif)
-        );
-      });
-      if (this.searchResults.length) {
-        this.noResult = false;
-        this.isResult = true;
-      } else {
-        // No match: restore the full list so the parent doesn't show an empty view
-        this.searchResults = this.resources;
-        this.$refs.searchInput.blur();
-        this.noResult = true;
-        this.isResult = false;
-      }
-      this.$emit("search-results", this.searchResults);
-    },
-    // Clears UI state only (called on focusin to start a fresh search)
-    resetInput() {
-      this.noResult = false;
-      this.isResult = false;
-      this.searchInput = "";
-    },
-    // Full reset: restores the full list and emits it to the parent
-    resetSearch() {
-      this.searchResults = this.resources;
-      this.resetInput();
-      this.$emit("search-results", this.searchResults);
-    },
-  },
+// Computed. //
+const resultMessage = computed(() => {
+  const lg = searchResults.value?.length ?? 0;
+  if (isResult.value) {
+    return `Your search has ${lg} result${lg > 1 ? "s" : ""}.`;
+  } else if (noResult.value) {
+    return "No results.";
+  } else {
+    return "\u00A0";
+  }
+});
+// Methods. //
+const search = () => {
+  const motif = cleanTxt(searchInput.value);
+  searchResults.value = props.resources.filter((resource) => {
+    return (
+      cleanTxt(resource?.title).includes(motif) ||
+      cleanTxt(resource?.description).includes(motif)
+    );
+  });
+  if (searchResults.value.length) {
+    noResult.value = false;
+    isResult.value = true;
+  } else {
+    /* No match: restore the full list so the parent doesn't show an empty view */
+    searchResults.value = null;
+    inputEl.value.blur();
+    noResult.value = true;
+    isResult.value = false;
+  }
+  emit("search-results", searchResults.value);
+};
+/* Clears UI state only (called on focusin to start a fresh search) */
+const resetInput = () => {
+  noResult.value = false;
+  isResult.value = false;
+  searchInput.value = "";
+};
+/* Full reset: restores the full list and emits it to the parent */
+const resetSearch = () => {
+  searchResults.value = null;
+  resetInput();
+  emit("search-results", searchResults.value);
 };
 </script>
+
 <template>
   <fieldset>
-    <button class="btn-neutral btn-icon search-reset" @click="resetSearch">
-      <X size="14">reset</X>
+    <button class="btn-neutral btn-icon search-reset" @click="resetSearch" aria-label="Search">
+      <X :size="14">reset</X>
     </button>
     <input
       type="search"
@@ -81,11 +73,11 @@ export default {
       v-model="searchInput"
       @focusin="resetInput()"
       @keydown.enter="search"
-      ref="searchInput"
+      ref="inputEl"
       placeholder="Search..."
       aria-label="search"
     />
-    <button type="button" name="search" class="btn-cta b-0" @click="search">
+    <button type="button" name="search" class="btn-cta b-0" @click="search" aria-label="Search reset">
       <Search size="20">Search</Search>
     </button>
   </fieldset>
@@ -132,7 +124,7 @@ input[type="search"]::-webkit-search-cancel-button {
   inset-block: 0;
   right: 3.25em;
   /* Vertical centering between top: 0 and bottom: 0 */
-  margin-block: auto;   
+  margin-block: auto;
   padding: 0;
   width: 1.5em;
   height: 1.5em;

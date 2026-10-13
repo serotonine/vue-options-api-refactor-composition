@@ -7,6 +7,10 @@ const tabs = {
   "stored-resources": StoredResources,
   "base-resource-form": BaseResourceForm,
 };
+// Refs. //
+const activeTab = ref("stored-resources");
+/* Holds the resource being edited; null means we're in "add" mode. */
+const resource = ref(null);
 
 // Methods. //
 /* isEmpty resets the edited resource when switching to the "Add" tab manually. */
@@ -27,32 +31,30 @@ const addResource = (resource) => {
   saveResources();
   selectTab("stored-resources");
 };
-const updateResources = (resource) => {
+const updateResources = (res) => {
   /*   splice replaces in-place to keep the same list position */
-  const index = resources.value.findIndex((r) => r.id === resource.id);
-  resources.value.splice(index, 1, { ...resource });
+  const index = resources.value.findIndex((r) => r.id === res.id);
+  resources.value.splice(index, 1, { ...res });
   resource.value = null;
   selectTab("stored-resources");
   saveResources();
 };
-const editResource = (resource) => {
+const editResource = (res) => {
   // Sets the resource to edit, then switches to the form tab
-  resource.value = resource;
+  resource.value = res;
   selectTab("base-resource-form");
 };
-const removeResource = (resource) => {
-  const index = this.resources.findIndex((r) => r.id === resource.id);
+const removeResource = (res) => {
+  const index = resources.value.findIndex((r) => r.id === res.id);
   resources.value.splice(index, 1);
   saveResources();
 };
 // Refs. //
-const activeTab = ref("stored-resources");
 const resources = ref(loadResources());
-/* Holds the resource being edited; null means we're in "add" mode. */
-const resource = ref(null);
+
 // Provide. //
 provide("res", {
-  resources: readonly(resources),
+  resources,
   updateResources,
   addResource,
   editResource,
@@ -85,7 +87,7 @@ provide("res", {
       </button>
       <component
         :is="tabs[activeTab]"
-        v-bind="activeTab === 'base-resource-form' ? { resource } : {}"
+        v-bind="activeTab === 'base-resource-form' ? { resource:resource } : {}"
       >
       </component>
     </div>

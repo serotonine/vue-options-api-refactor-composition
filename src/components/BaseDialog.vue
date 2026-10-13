@@ -1,28 +1,30 @@
-<script>
+<script setup>
 // Generic modal dialog built on the native <dialog> element.
 // showModal() gives us a free backdrop and focus trap without extra libraries.
 // Content is injected via the default slot.
+import { ref, defineEmits, onMounted } from "vue";
 import { X } from "@lucide/vue";
-export default {
-  components: { X },
-  methods: {
-    open() {
-      this.$refs.dialog.showModal();
-    },
-    // Emits "close" so the parent can toggle its v-if and unmount this component
-    close() {
-      this.$emit("close");
-    },
-  },
-  emits: ["close"],
-  mounted() {
-    this.$refs.dialog.showModal();
-  },
+// Emits. //
+const emit = defineEmits(["close"]);
+// Ref. //
+const dialog = ref(null);
+// Methods. //
+/* const open = () => {
+  dialog.value.showModal();
+}; */
+// Emits "close" so the parent can toggle its v-if and unmount this component
+const close = () => {
+  emit("close");
 };
+// onMounted. //
+onMounted(() => {
+  dialog.value.showModal();
+  dialog.value.focus();
+});
 </script>
 
 <template>
-  <dialog ref="dialog">
+  <dialog ref="dialog" @click.self="close">
     <button class="btn-neutral btn-icon" @click="close">
       <X :size="24" />
     </button>

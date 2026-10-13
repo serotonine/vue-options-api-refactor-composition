@@ -1,27 +1,31 @@
-<script>
+<script setup>
 // Displays a single resource card with edit and delete actions.
-// editResource and removeResource are injected from App.vue (avoid prop-drilling).
-import { Pencil, Trash } from  "@lucide/vue";
-export default {
-  components: { Pencil, Trash },
-  props: ["resource", "hr"],
-  inject: ["editResource", "removeResource"],
-  methods: {
-    edit() {
-      this.editResource(this.resource);
-    },
-    remove() {
-      const ok = confirm(
-        `are you sure to delete ${this.resource.title ?? "this resource"} ?`,
-      );
-      if (ok) {
-        this.removeResource(this.resource);
-      } else {
-        // btn-delete loss focus on confirm cancel.
-        this.$refs.deleteButton.blur();
-      }
-    },
-  },
+// editResource and removeResource are injected from App.vue.
+import { ref, inject, defineProps } from "vue";
+import { Pencil, Trash } from "@lucide/vue";
+
+const props = defineProps({
+  resource: { type: Object, required: true },
+});
+
+// Inject. //
+const { editResource, removeResource } = inject("res");
+// Ref. //
+const deleteButton = ref(null);
+// Methods. //
+const edit = () => {
+  editResource(props.resource);
+};
+const remove = () => {
+  const ok = confirm(
+    `are you sure to delete ${props.resource.title ?? "this resource"} ?`,
+  );
+  if (ok) {
+    removeResource(props.resource);
+  } else {
+    // btn-delete loss focus on confirm cancel.
+    deleteButton.value.blur();
+  }
 };
 </script>
 
@@ -60,7 +64,7 @@ export default {
 .resource_item-header {
   display: flex;
   align-items: center;
-  h3{
+  h3 {
     flex-grow: 1;
     margin-bottom: 0.5em;
   }

@@ -6,17 +6,18 @@
   // Inject. //
   const {resources} = inject('res');
   // Ref. //
-  const data = ref(resources);
+  /* beware ! ref() return a ref argument. */
+  const data = ref(resources.value);
   // Methods. //
   /* Receives filtered results emitted by BaseSearch and updates the displayed list */
   const displaySearchResults = (results) => {
-    data.value = results;
+    data.value = results?.length ? results : resources.value;
   };
 </script>
 
 <template>
   <section class="tab">
-    <div v-if="data.length > 0">
+    <div v-if="data">
       <base-search
         :resources="resources"
         @search-results="displaySearchResults"
@@ -24,20 +25,12 @@
       <div class="resources">
         <!-- hr prop is false on the last item to avoid a trailing separator -->
         <base-resource
-          v-for="(resource, index) in data"
+          v-for="resource in data"
           :key="resource?.id"
           :resource="resource"
-          :hr="index < data.length - 1"
         ></base-resource>
       </div>
     </div>
     <div v-else><h4>No resources actually...</h4></div>
   </section>
 </template>
-<style scoped>
-.resources {
-  /* max-height: 500px;
-  overflow-y:auto;
-  padding-right: 1em;; */
-}
-</style>

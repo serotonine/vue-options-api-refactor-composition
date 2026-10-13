@@ -16,7 +16,6 @@ const data = ref({ title: "", description: "", link: "", ...props.resource });
 const form = ref(null);
 const formIsInvalid = ref(false);
 const error = ref([]);
-
 // Methods. //
 const submit = () => {
   // Reset
@@ -24,17 +23,17 @@ const submit = () => {
   const errors = [];
   error.value = [];
   // FormData reads field values by their name attribute — no need to list them manually
-  const data = Object.fromEntries(new FormData(form.value));
-  for (const [key, value] of Object.entries(data)) {
+  const d = Object.fromEntries(new FormData(form.value));
+  for (const [key, value] of Object.entries(d)) {
     if (value === "") {
       errors.push(`${key} field is empty,`);
     }
   }
 
-  if (data.link !== "" && !isValidLink(data.link)) {
+  if (d.link !== "" && !isValidLink(d.link)) {
     errors.push("link is not valid");
   }
-  if (data.description.length > 600) {
+  if (d.description.length > 600) {
     errors.push("The description must have max 600 characters");
   }
 
@@ -46,8 +45,8 @@ const submit = () => {
     return;
   }
   props.resource
-    ? updateResources({ id: resource.value.id, ...data })
-    : addResource(data);
+    ? updateResources({ id: props.resource.id, ...d })
+    : addResource(d);
   form.value.reset();
 };
 </script>
